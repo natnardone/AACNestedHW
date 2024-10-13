@@ -11,8 +11,8 @@ import edu.grinnell.csc207.util.NullKeyException;
  */
 public class AACCategory implements AACPage {
 
-	String name;
-	AssociativeArray<String,String> cat;
+	private String name;
+	private AssociativeArray<String,String> cat;
 
 	
 	/**
@@ -43,11 +43,7 @@ public class AACCategory implements AACPage {
 	 * it should return an empty array
 	 */
 	public String[] getImageLocs() {
-		String[] imgs = new String[cat.size()];
-    for (int i = 0; i < cat.size(); i++) {
-      // need to loop through, add every image ??
-    }
-    return imgs;
+		return cat.getKeys();
 	}
 
 	/**
@@ -69,8 +65,7 @@ public class AACCategory implements AACPage {
 		try {
       return this.cat.get(imageLoc);
     } catch (Exception e) {
-      System.err.println("Key not found");
-      return "";
+      throw new NoSuchElementException();
     }
 	}
 

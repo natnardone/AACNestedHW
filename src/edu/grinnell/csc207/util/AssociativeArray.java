@@ -165,6 +165,20 @@ public class AssociativeArray<K, V> {
   } // get(K)
 
   /**
+   * Get all keys in the array.
+   *
+   * @return
+   *   An array of all keys in the array
+   */
+  public K[] getKeys() {
+    K[] arr = (K[]) new Object[this.size];
+    for (int i = 0; i < this.size; i++) {
+      arr[i] = this.pairs[i].key;
+    }
+    return arr;
+  }
+
+  /**
    * Determine if key appears in the associative array. Should
    * return false for the null key, since it cannot appear.
    *

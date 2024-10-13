@@ -1,3 +1,8 @@
+import edu.grinnell.csc207.util.AssociativeArray;
+import java.util.NoSuchElementException;
+import edu.grinnell.csc207.util.KeyNotFoundException;
+import edu.grinnell.csc207.util.NullKeyException;
+
 /**
  * Creates a set of mappings of an AAC that has two levels,
  * one for categories and then within each category, it has
@@ -10,7 +15,11 @@
  *
  */
 public class AACMappings implements AACPage {
-	
+
+	//private AACCategory allcats; // maps filenames (of categories) to words
+	private AssociativeArray<String,AACCategory> categories; // maps filenames to categories
+	private String current; // current category (filename)
+
 	/**
 	 * Creates a set of mappings for the AAC based on the provided
 	 * file. The file is read in to create categories and fill each
@@ -32,7 +41,8 @@ public class AACMappings implements AACPage {
 	 * @param filename the name of the file that stores the mapping information
 	 */
 	public AACMappings(String filename) {
-
+		// set categories values;
+    current = "";
 	}
 	
 	/**
@@ -50,7 +60,19 @@ public class AACMappings implements AACPage {
 	 * category
 	 */
 	public String select(String imageLoc) {
-		return null;
+    if (this.categories.hasKey(imageLoc)) {
+      this.current = imageLoc;
+      return "";
+    } else {
+      try {
+        return categories.get(current).select(imageLoc);
+      } catch (Exception e) {
+        throw new NoSuchElementException();
+      }
+    }
+    // if category (check allcats keys), update current category and return empty string
+    // else assume image, if in current category return text to be spoken
+    // else throw exception
 	}
 	
 	/**
@@ -59,7 +81,16 @@ public class AACMappings implements AACPage {
 	 * it should return an empty array
 	 */
 	public String[] getImageLocs() {
-		return null;
+		try {
+      if (current.equals("")) {
+        return categories.getKeys();
+      } else {
+        return categories.get(current).getImageLocs();
+      }
+    } catch (Exception e) {
+      System.err.println("Invalid key");
+      return null;
+    } // returns AACCategory for that category
 	}
 	
 	/**
@@ -67,7 +98,7 @@ public class AACMappings implements AACPage {
 	 * category
 	 */
 	public void reset() {
-
+    current = "";
 	}
 	
 	
@@ -102,7 +133,17 @@ public class AACMappings implements AACPage {
 	 * @param text the text associated with the image
 	 */
 	public void addItem(String imageLoc, String text) {
-		
+    try {
+      if (current.equals("")) {
+        categories.set(imageLoc, new AACCategory(text));
+      } else {
+        categories.get(current).addItem(imageLoc, text);
+      }
+    } catch (Exception e) {
+      System.err.println("Null image location.");
+    }
+		// if on homescreen, create new category with image and name
+    // if in category, add image and text in category
 	}
 
 
@@ -112,7 +153,15 @@ public class AACMappings implements AACPage {
 	 * on the default category
 	 */
 	public String getCategory() {
-		return null;
+    try {
+      if (current.equals("")) {
+        return "";
+      } else {
+        return categories.get(current).getCategory();
+      }
+    } catch (Exception e) {
+      return null;
+    }
 	}
 
 
@@ -124,6 +173,11 @@ public class AACMappings implements AACPage {
 	 * can be displayed, false otherwise
 	 */
 	public boolean hasImage(String imageLoc) {
-		return false;
+		for (String img : this.getImageLocs()) {
+      if (imageLoc.equals(img)) {
+        return true;
+      }
+    }
+    return false;
 	}
 }
