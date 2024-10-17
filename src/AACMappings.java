@@ -3,6 +3,7 @@ import edu.grinnell.csc207.util.AssociativeArray;
 import java.io.FileWriter;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
+import java.io.File;
 
 import edu.grinnell.csc207.util.KeyNotFoundException;
 import edu.grinnell.csc207.util.NullKeyException;
@@ -45,18 +46,51 @@ public class AACMappings implements AACPage {
 	 * @param filename the name of the file that stores the mapping information
 	 */
 	public AACMappings(String filename) {
-    Scanner scan = new Scanner(filename);
-    while (scan.hasNextLine()) {
-      String line = scan.nextLine();
-      // split by space
-      // check first character
-      // create as needed
+    try {
+      Scanner scan = new Scanner(new File(filename));
+      categories = new AssociativeArray<String,AACCategory>();
+      String currentCat = "";
+      while (scan.hasNextLine()) {
+        String line = scan.nextLine();
+        String[] parts = line.split(" ");
+        System.out.println("test 1");
+
+        if (parts[0].charAt(0) != '>') {
+          System.out.println("test 2a");
+          // category
+          try {
+            System.out.println(parts[0]);
+            System.out.println(parts[1]);
+            categories.set(parts[0], new AACCategory(parts[1])); // here is issue
+            System.out.println("test 2a.1");
+          } catch (Exception e) {
+            System.err.println("Null key");
+          }
+          currentCat = parts[0];
+        } else {
+          System.out.println("test 2b");
+          // item
+          try {
+            categories.get(currentCat).addItem(parts[0], parts[1]);
+          } catch (KeyNotFoundException e) {
+            System.err.println("Key not found");
+          }
+        }
+        System.out.println("test 3");
+        // split by space
+        // check first character
+        // create as needed
+      }
+      System.out.println("test 4");
+      scan.close();
+      // set categories values;
+      // for a line not starting with >, create new pair in categories
+      // set that pair to current
+      // for each line starting with >, create new pair in the AACCategory
+      current = "";
+    } catch (Exception e) {
+
     }
-		// set categories values;
-    // for a line not starting with >, create new pair in categories
-    // set that pair to current
-    // for each line starting with >, create new pair in the AACCategory
-    current = "";
 	}
 	
 	/**
@@ -97,12 +131,12 @@ public class AACMappings implements AACPage {
 	public String[] getImageLocs() {
 		try {
       if (current.equals("")) {
-        return categories.getKeys();
+        return this.categories.getKeys(); // for some reason breaks here? - classCastException
       } else {
-        return categories.get(current).getImageLocs();
+        return this.categories.get(current).getImageLocs();
       }
     } catch (Exception e) {
-      System.err.println("Invalid key");
+      System.err.println(e);
       return null;
     } // returns AACCategory for that category
 	}
@@ -138,23 +172,24 @@ public class AACMappings implements AACPage {
 	 */
 	public void writeToFile(String filename) {
     try {
-      FileWriter write = new FileWriter(filename);
+      FileWriter writer = new FileWriter(filename);
+      String[] cats = categories.getKeys();
+      String[] imgs;
+      for (int i = 0; i < cats.length; i++) { // loop through categories
+        try {
+          AACCategory cur = categories.get(cats[i]); // AACCategory that corresponds to current category
+          imgs = cur.getImageLocs();
+          writer.write(cats[i] + " " + cur.getCategory() + "\n");
+          for (int j = 0; j < imgs.length; j++) { // loop through images
+            writer.write(">" + imgs[j] + " " + cur.select(imgs[j]) + "\n");
+          }
+        } catch (Exception e) {
+
+        }
+      }
+      writer.close();
     } catch (Exception e) {
 
-    }
-    String[] cats = categories.getKeys();
-    String[] imgs;
-    for (int i = 0; i < cats.length; i++) { // loop through categories
-      try {
-        AACCategory cur = categories.get(cats[i]); // AACCategory that corresponds to current category
-        imgs = cur.getImageLocs();
-        // print line
-        for (int j = 0; j < imgs.length; j++) { // loop through images
-          // print > and line
-        }
-      } catch (Exception e) {
-
-      }
     }
 		// in categories, get first string/aaccategory pair for first line
     // then for each pair in that aaccategory, print > and the pair of filename and word on a line
