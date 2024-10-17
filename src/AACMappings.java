@@ -1,5 +1,9 @@
 import edu.grinnell.csc207.util.AssociativeArray;
+
+import java.io.FileWriter;
 import java.util.NoSuchElementException;
+import java.util.Scanner;
+
 import edu.grinnell.csc207.util.KeyNotFoundException;
 import edu.grinnell.csc207.util.NullKeyException;
 
@@ -41,7 +45,17 @@ public class AACMappings implements AACPage {
 	 * @param filename the name of the file that stores the mapping information
 	 */
 	public AACMappings(String filename) {
+    Scanner scan = new Scanner(filename);
+    while (scan.hasNextLine()) {
+      String line = scan.nextLine();
+      // split by space
+      // check first character
+      // create as needed
+    }
 		// set categories values;
+    // for a line not starting with >, create new pair in categories
+    // set that pair to current
+    // for each line starting with >, create new pair in the AACCategory
     current = "";
 	}
 	
@@ -123,7 +137,28 @@ public class AACMappings implements AACPage {
 	 * AAC mapping to
 	 */
 	public void writeToFile(String filename) {
-		
+    try {
+      FileWriter write = new FileWriter(filename);
+    } catch (Exception e) {
+
+    }
+    String[] cats = categories.getKeys();
+    String[] imgs;
+    for (int i = 0; i < cats.length; i++) { // loop through categories
+      try {
+        AACCategory cur = categories.get(cats[i]); // AACCategory that corresponds to current category
+        imgs = cur.getImageLocs();
+        // print line
+        for (int j = 0; j < imgs.length; j++) { // loop through images
+          // print > and line
+        }
+      } catch (Exception e) {
+
+      }
+    }
+		// in categories, get first string/aaccategory pair for first line
+    // then for each pair in that aaccategory, print > and the pair of filename and word on a line
+    // when done with one category, continue through the others
 	}
 	
 	/**
