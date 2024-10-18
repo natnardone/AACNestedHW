@@ -53,35 +53,35 @@ public class AACMappings implements AACPage {
       while (scan.hasNextLine()) {
         String line = scan.nextLine();
         String[] parts = line.split(" ");
-        System.out.println("test 1");
 
         if (parts[0].charAt(0) != '>') {
-          System.out.println("test 2a");
           // category
           try {
-            System.out.println(parts[0]);
-            System.out.println(parts[1]);
-            categories.set(parts[0], new AACCategory(parts[1])); // here is issue
-            System.out.println("test 2a.1");
+            String catDesc = parts[1];
+            for (int i = 2; i < parts.length; i++) {
+              catDesc = catDesc.concat(" " + parts[i]);
+            }
+            categories.set(parts[0], new AACCategory(catDesc));
           } catch (Exception e) {
             System.err.println("Null key");
           }
           currentCat = parts[0];
         } else {
-          System.out.println("test 2b");
           // item
           try {
-            categories.get(currentCat).addItem(parts[0], parts[1]);
+            String imgDesc = parts[1];
+            for (int i = 2; i < parts.length; i++) {
+              imgDesc = imgDesc.concat(" " + parts[i]);
+            }
+            categories.get(currentCat).addItem(parts[0].substring(1), imgDesc);
           } catch (KeyNotFoundException e) {
             System.err.println("Key not found");
           }
         }
-        System.out.println("test 3");
         // split by space
         // check first character
         // create as needed
       }
-      System.out.println("test 4");
       scan.close();
       // set categories values;
       // for a line not starting with >, create new pair in categories
@@ -131,7 +131,12 @@ public class AACMappings implements AACPage {
 	public String[] getImageLocs() {
 		try {
       if (current.equals("")) {
-        return this.categories.getKeys(); // for some reason breaks here? - classCastException
+        Object[] temp = this.categories.getKeys();
+        String[] actual = new String[temp.length];
+        for (int i = 0; i < temp.length; i++) {
+          actual[i] = (String) temp[i];
+        }
+        return actual;
       } else {
         return this.categories.get(current).getImageLocs();
       }

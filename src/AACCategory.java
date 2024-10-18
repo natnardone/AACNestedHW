@@ -43,7 +43,12 @@ public class AACCategory implements AACPage {
 	 * it should return an empty array
 	 */
 	public String[] getImageLocs() {
-		return cat.getKeys();
+    Object[] temp = this.cat.getKeys();
+    String[] actual = new String[temp.length];
+    for (int i = 0; i < temp.length; i++) {
+      actual[i] = (String) temp[i];
+    }
+    return actual; 
 	}
 
 	/**
