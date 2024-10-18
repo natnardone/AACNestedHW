@@ -6,7 +6,7 @@ import edu.grinnell.csc207.util.NullKeyException;
  * Represents the mappings for a single category of items that should
  * be displayed
  * 
- * @author Catie Baker & Natalie Nardones
+ * @author Catie Baker & Natalie Nardone
  *
  */
 public class AACCategory implements AACPage {
