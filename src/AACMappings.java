@@ -16,7 +16,7 @@ import edu.grinnell.csc207.util.NullKeyException;
  * and updating the set of images that would be shown and handling
  * an interactions.
  * 
- * @author Catie Baker & YOUR NAME HERE
+ * @author Catie Baker & Natalie Nardone
  *
  */
 public class AACMappings implements AACPage {
@@ -46,51 +46,47 @@ public class AACMappings implements AACPage {
 	 * @param filename the name of the file that stores the mapping information
 	 */
 	public AACMappings(String filename) {
-    try {
-      Scanner scan = new Scanner(new File(filename));
-      categories = new AssociativeArray<String,AACCategory>();
-      String currentCat = "";
-      while (scan.hasNextLine()) {
-        String line = scan.nextLine();
-        String[] parts = line.split(" ");
+    categories = new AssociativeArray<String,AACCategory>();
+    File mapfile = new File(filename);
+    if (mapfile.length() != 0) {
+      try {
+        Scanner scan = new Scanner(mapfile);
+        String currentCat = "";
+        while (scan.hasNextLine()) {
+          String line = scan.nextLine();
+          String[] parts = line.split(" ");
 
-        if (parts[0].charAt(0) != '>') {
-          // category
-          try {
-            String catDesc = parts[1];
-            for (int i = 2; i < parts.length; i++) {
-              catDesc = catDesc.concat(" " + parts[i]);
+          if (parts[0].charAt(0) != '>') {
+            // category
+            try {
+              String catDesc = parts[1];
+              for (int i = 2; i < parts.length; i++) {
+                catDesc = catDesc.concat(" " + parts[i]);
+              }
+              categories.set(parts[0], new AACCategory(catDesc));
+            } catch (Exception e) {
+              System.err.println("Null key");
             }
-            categories.set(parts[0], new AACCategory(catDesc));
-          } catch (Exception e) {
-            System.err.println("Null key");
-          }
-          currentCat = parts[0];
-        } else {
-          // item
-          try {
-            String imgDesc = parts[1];
-            for (int i = 2; i < parts.length; i++) {
-              imgDesc = imgDesc.concat(" " + parts[i]);
+            currentCat = parts[0];
+          } else {
+            // item
+            try {
+              String imgDesc = parts[1];
+              for (int i = 2; i < parts.length; i++) {
+                imgDesc = imgDesc.concat(" " + parts[i]);
+              }
+              categories.get(currentCat).addItem(parts[0].substring(1), imgDesc);
+            } catch (KeyNotFoundException e) {
+              System.err.println("Key not found");
             }
-            categories.get(currentCat).addItem(parts[0].substring(1), imgDesc);
-          } catch (KeyNotFoundException e) {
-            System.err.println("Key not found");
           }
         }
-        // split by space
-        // check first character
-        // create as needed
-      }
-      scan.close();
-      // set categories values;
-      // for a line not starting with >, create new pair in categories
-      // set that pair to current
-      // for each line starting with >, create new pair in the AACCategory
-      current = "";
-    } catch (Exception e) {
+        scan.close();
+      } catch (Exception e) {
 
+      }
     }
+    current = "";
 	}
 	
 	/**
@@ -118,9 +114,6 @@ public class AACMappings implements AACPage {
         throw new NoSuchElementException();
       }
     }
-    // if category (check allcats keys), update current category and return empty string
-    // else assume image, if in current category return text to be spoken
-    // else throw exception
 	}
 	
 	/**
@@ -196,9 +189,6 @@ public class AACMappings implements AACPage {
     } catch (Exception e) {
 
     }
-		// in categories, get first string/aaccategory pair for first line
-    // then for each pair in that aaccategory, print > and the pair of filename and word on a line
-    // when done with one category, continue through the others
 	}
 	
 	/**

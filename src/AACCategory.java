@@ -6,7 +6,7 @@ import edu.grinnell.csc207.util.NullKeyException;
  * Represents the mappings for a single category of items that should
  * be displayed
  * 
- * @author Catie Baker & YOUR NAME HERE
+ * @author Catie Baker & Natalie Nardones
  *
  */
 public class AACCategory implements AACPage {
@@ -67,7 +67,7 @@ public class AACCategory implements AACPage {
 	 * 		   category
 	 */
 	public String select(String imageLoc) {
-		try {
+	  try {
       return this.cat.get(imageLoc);
     } catch (Exception e) {
       throw new NoSuchElementException();
